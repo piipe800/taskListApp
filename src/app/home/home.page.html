@@ -6,10 +6,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-item>
-  <ion-input placeholder="Nueva categoria" [formControl]="newCategoryControl"></ion-input>
-  <ion-button (click)="addCategory()">Agregar</ion-button>
-</ion-item>
+@if (categoriesEnabled) {
+  <ion-item>
+    <ion-input placeholder="Nueva categoria" [formControl]="newCategoryControl"></ion-input>
+    <ion-button (click)="addCategory()">Agregar</ion-button>
+  </ion-item>
 
 @for (category of categories; track category.id) {
   <ion-chip (click)="selectedCategoryControl.setValue(category.id)"
@@ -21,7 +22,7 @@
     </ion-icon>
   </ion-chip>
 }
-
+}
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-item>
     <ion-input placeholder="Nueva tarea" [formControl]="newTaskTitle"></ion-input>

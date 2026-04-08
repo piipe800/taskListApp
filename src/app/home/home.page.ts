@@ -5,6 +5,7 @@ import { TaskService } from '../services/task/task.service';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CategoryService } from '../services/category/category.service';
 import { Category } from '../models/category';
+import { FeatureFlagService } from '../services/feature-flags/feature-flag.service';
 
 @Component({
   selector: 'app-home',
@@ -19,14 +20,22 @@ export class HomePage implements OnInit {
   categories: Category[] = [];
   selectedCategoryControl = new FormControl<string | null>(null);
   newCategoryControl = new FormControl('');
+  categoriesEnabled = false;
 
   constructor(
     private taskService: TaskService,
-    private categoryService: CategoryService) {}
+    private categoryService: CategoryService,
+    private featureFlagService: FeatureFlagService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.featureFlagService.loadFlags();
+    this.categoriesEnabled = this.featureFlagService.isCategoryFeatureEnabled();
+
     this.loadTasks();
-    this.loadCategories();
+
+    if (this.categoriesEnabled) {
+      this.loadCategories();
+    }
   }
 
   loadTasks() {
