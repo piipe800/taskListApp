@@ -19,13 +19,14 @@ export class TaskService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(tasks));
   }
 
-  addTask(title: string): void {
+  addTask(title: string, categoryId?: string): void {
     const tasks = this.getTasks();
 
     const newTask: Task = {
-      id: new Date().toString(),
+      id: crypto.randomUUID(),
       title,
-      completed: false
+      completed: false,
+      categoryId: categoryId
     };
     tasks.push(newTask);
     this.saveTasks(tasks);

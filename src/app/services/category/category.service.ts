@@ -16,7 +16,7 @@ export class CategoryService {
     const categories = this.getCategories();
 
     const newCategory: Category = {
-      id: new Date().toString(),
+      id: crypto.randomUUID(),
       name,
     };
     categories.push(newCategory);

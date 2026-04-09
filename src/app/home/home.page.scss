@@ -25,3 +25,38 @@
 #container a {
   text-decoration: none;
 }
+
+ion-card {
+  border-radius: 16px;
+}
+
+ion-item {
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+ion-button {
+  border-radius: 10px;
+}
+
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+ion-chip {
+  border-radius: 12px;
+}
+
+.empty-state {
+  padding: 20px;
+  color: #888;
+  font-size: 14px;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #999;
+}

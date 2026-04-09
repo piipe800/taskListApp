@@ -21,6 +21,8 @@ export class HomePage implements OnInit {
   selectedCategoryControl = new FormControl<string | null>(null);
   newCategoryControl = new FormControl('');
   categoriesEnabled = false;
+  filteredTasks: Task[] = [];
+  filterCategoryControl = new FormControl<string | null>(null);
 
   constructor(
     private taskService: TaskService,
@@ -31,39 +33,40 @@ export class HomePage implements OnInit {
     await this.featureFlagService.loadFlags();
     this.categoriesEnabled = this.featureFlagService.isCategoryFeatureEnabled();
 
-    this.loadTasks();
+    this.tasks = this.taskService.getTasks();
 
     if (this.categoriesEnabled) {
-      this.loadCategories();
+      this.categories = this.categoryService.getCategories();
     }
-  }
-
-  loadTasks() {
-    this.tasks = this.taskService.getTasks();
-  }
-
-  loadCategories() {
-    this.categories = this.categoryService.getCategories();
+    this.filterCategoryControl.valueChanges.subscribe(() => {
+      this.updateFilteredTasks();
+    });
+    this.updateFilteredTasks();
   }
 
   addTask() {
     const value = this.newTaskTitle.value;
 
     if (!value?.trim()) return;
-
-    this.taskService.addTask(value);
+    
+    const categoryId = this.selectedCategoryControl.value || undefined;
+    this.taskService.addTask(value, categoryId);
+    this.tasks = this.taskService.getTasks();
     this.newTaskTitle.reset();
-    this.loadTasks();
+    this.selectedCategoryControl.reset();
+    this.updateFilteredTasks();
   }
 
   toggleTask(taskId: string) {
     this.taskService.toggleTask(taskId);
-    this.loadTasks();
+    this.tasks = this.taskService.getTasks();
+    this.updateFilteredTasks();
   }
 
   deleteTask(taskId: string) {
     this.taskService.deleteTask(taskId);
-    this.loadTasks();
+    this.tasks = this.taskService.getTasks();
+    this.updateFilteredTasks();
   }
 
   addCategory() {
@@ -72,12 +75,27 @@ export class HomePage implements OnInit {
     if (!value?.trim()) return;
 
     this.categoryService.addCategory(value);
+    this.categories = this.categoryService.getCategories();
     this.newCategoryControl.reset();
-    this.loadCategories();
   }
 
   deleteCategory(categoryId: string) {
     this.categoryService.deleteCategory(categoryId);
-    this.loadCategories();
+    this.categories = this.categoryService.getCategories();
+
+    if (this.filterCategoryControl.value === categoryId) {
+      this.filterCategoryControl.reset();
+    }
+
+    this.updateFilteredTasks();
+  }
+
+  updateFilteredTasks() {
+    const selected = this.filterCategoryControl.value;
+    if (!selected) {
+      this.filteredTasks = this.tasks;
+    } else {
+      this.filteredTasks = this.tasks.filter(t => t.categoryId === selected);
+    }
   }
 }

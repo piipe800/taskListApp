@@ -6,24 +6,48 @@
   </ion-toolbar>
 </ion-header>
 
-@if (categoriesEnabled) {
-  <ion-item>
-    <ion-input placeholder="Nueva categoria" [formControl]="newCategoryControl"></ion-input>
-    <ion-button (click)="addCategory()">Agregar</ion-button>
-  </ion-item>
-
-@for (category of categories; track category.id) {
-  <ion-chip (click)="selectedCategoryControl.setValue(category.id)"
-  [color]="selectedCategoryControl.value === category.id ? 'primary' : ''">
-    {{ category.name }}
-    <ion-icon
-      name="close-circle"
-      (click)="deleteCategory(category.id)">
-    </ion-icon>
-  </ion-chip>
-}
-}
 <ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Categorias</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+    @if (categoriesEnabled) {
+      <ion-item>
+        <ion-input placeholder="Nueva categoria" [formControl]="newCategoryControl"></ion-input>
+        <ion-button (click)="addCategory()">Agregar</ion-button>
+      </ion-item>
+
+      @for (category of categories; track category.id) {
+          <ion-chip (click)="selectedCategoryControl.setValue(category.id)"
+            [color]="selectedCategoryControl.value === category.id ? 'primary' : ''">
+            {{ category.name }}
+            <ion-button color="danger"
+              fill="clear"
+              size="small"
+              (click)="deleteCategory(category.id)">x
+            </ion-button>
+          </ion-chip>
+        
+      }
+    }
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-select placeholder="Filtrar por categoría" [formControl]="filterCategoryControl">
+        <ion-select-option value="">Todas</ion-select-option>
+        @for (category of categories; track category.id) {
+        <ion-select-option [value]="category.id">
+          {{ category.name }}
+        </ion-select-option>
+      }
+      </ion-select>
+    </ion-item>
+    <ion-card-header>
+      <ion-card-title>Tareas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
   <ion-item>
     <ion-input placeholder="Nueva tarea" [formControl]="newTaskTitle"></ion-input>
 
@@ -38,8 +62,24 @@
     <ion-button (click)="addTask()">Agregar</ion-button>
   </ion-item>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  @if (tasks.length > 0) {
+      <ion-list>
+        @for (task of filteredTasks; track task.id) {
+          <ion-item>
+            <ion-label>{{ task.title }}</ion-label>
+            <ion-checkbox slot="start" [checked]="task.completed" (ionChange)="toggleTask(task.id)">
+            </ion-checkbox>
+            <ion-button
+              color="danger"
+              fill="outline"
+              size="small"
+              (click)="deleteTask(task.id)">x
+            </ion-button>
+          </ion-item>
+        }
+      </ion-list>
+  }
+  </ion-card-content>
+  </ion-card>
+
 </ion-content>
